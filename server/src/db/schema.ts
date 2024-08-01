@@ -1,13 +1,13 @@
 import { pgTable, uuid, varchar, timestamp, text } from 'drizzle-orm/pg-core'
 
-const user = pgTable('users', {
+export const user = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   username: varchar('name').unique().notNull(),
   email: varchar('email').unique().notNull(),
   password: varchar('password').notNull(),
 });
 
-const post = pgTable('posts', {
+export const post = pgTable('posts', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: varchar('title').notNull(),
   content: text('content').notNull(),
@@ -18,7 +18,7 @@ const post = pgTable('posts', {
   updatedAt: timestamp('updated_at').defaultNow()
 });
 
-const comment = pgTable('comments', {
+export const comment = pgTable('comments', {
   id: uuid('id').primaryKey().defaultRandom(),
   text: varchar('text').notNull(),
   userId: uuid('user_id').references(() => user.id).notNull(),
@@ -26,30 +26,28 @@ const comment = pgTable('comments', {
   createdAt: timestamp('created_at').defaultNow()
 });
 
-const like = pgTable('likes', {
+export const like = pgTable('likes', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id').references(() => user.id).notNull(),
   postId: uuid('post_id').references(() => post.id).notNull(),
   createdAt: timestamp('created_at').defaultNow()
 });
 
-const tag = pgTable('tags', {
+export const tag = pgTable('tags', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name').notNull(),
   description: varchar('description').notNull(),
   slug: varchar('slug').notNull()
 });
 
-const postTags = pgTable('posts_tags', {
+export const postTags = pgTable('posts_tags', {
   postId: uuid('post_id').references(() => post.id).notNull(),
   tagId: uuid('tag_id').references(() => tag.id).notNull(),
 });
 
-const bookmark = pgTable('bookmarks', {
+export const bookmark = pgTable('bookmarks', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id').references(() => user.id).notNull(),
   postId: uuid('post_id').references(() => post.id).notNull(),
   createdAt: timestamp('created_at').defaultNow()
 });
-
-module.exports = { user, post, comment, like, tag, postTags, bookmark };
