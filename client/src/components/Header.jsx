@@ -7,7 +7,7 @@ export default function Header() {
   const status = 'authenticated';
 
   return (
-    <header className='h-18 w-full mb-4 border-b-[1px] shadow-md border-gray-400 bg-white'>
+    <header className='h-18 w-full mb-4 border-b-[1px] shadow-sm border-gray-300 bg-white'>
       <Navbar fluid rounded>
         <Navbar.Brand href='/' className=''>
           <div className='flex items-center justify-between gap-1 text-xl font-bold uppercase tracking-wide'>
@@ -31,7 +31,7 @@ export default function Header() {
             </button>
             {status === 'authenticated' ? (
               <>
-                <button className='hidden md:flex items-center gap-2 rounded-lg border-[2px] border-gray-300 px-4 py-2 transition hover:border-cyan-500 hover:text-gray-900'>
+                <button className='hidden md:flex items-center gap-2 rounded border border-gray-300 px-4 py-2 transition hover:border-cyan-500 hover:text-gray-900'>
                   Write
                   <div>
                     <FiEdit />
