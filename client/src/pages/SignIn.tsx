@@ -1,5 +1,10 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../redux/store';
+import { signInStart, signInSuccess, signInFailed } from '../redux/userSlice';
+
 import { Alert, Spinner } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
 
@@ -10,10 +15,12 @@ interface FormData {
 
 export default function SignIn() {
   const [formData, setFormData] = useState<FormData>({});
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error: errorMessage } = useSelector(
+    (state: RootState) => state.user
+  );
 
   function handleFormInput(event: ChangeEvent<HTMLInputElement>) {
     setFormData({ ...formData, [event.target.id]: event.target.value });
@@ -22,8 +29,7 @@ export default function SignIn() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch(signInStart());
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -33,13 +39,12 @@ export default function SignIn() {
       const data = await res.json();
 
       if (!res.ok) {
-        return setErrorMessage(data.message);
+        return dispatch(signInFailed(data.message));
       }
+      dispatch(signInSuccess(data.message));
       navigate('/');
     } catch (error) {
-      setErrorMessage((error as Error).message);
-    } finally {
-      setLoading(false);
+      dispatch(signInFailed((error as Error).message));
     }
   }
 
