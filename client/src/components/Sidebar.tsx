@@ -9,14 +9,14 @@ export default function Sidebar() {
           <div className="flex flex-row items-center space-x-5">
             <div className="h-10 w-10 flex-none rounded-full bg-gray-300"></div>
             <div>
-              <div className="text-sm font-bold text-gray-900">Anh Liêm</div>
+              <div className="text-sm font-bold text-gray-900 dark:text-gray-100">Anh Liêm</div>
               <div className="text-xs line-clamp-2 lg:line-clamp-3">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum
                 officiis obcaecati minima?
               </div>
             </div>
             <div>
-              <button className="flex items-center space-x-3 rounded border border-gray-400/50 px-4 py-2 transition hover:border-cyan-500 hover:text-gray-900">
+              <button className="flex items-center space-x-3 rounded border border-blue-500 px-4 py-2 transition hover:bg-blue-500 hover:text-white">
                 Follow
               </button>
             </div>
@@ -29,7 +29,7 @@ export default function Sidebar() {
           <a href="" className="group flex items-center space-x-6">
             <div className="aspect-square h-full w-2/5 rounded-xl bg-gray-300"></div>
             <div className="flex w-3/5 flex-col space-y-2">
-              <div className="text-lg font-semibold decoration-cyan-500 group-hover:underline">
+              <div className="text-lg font-semibold decoration-blue-500 group-hover:underline">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam
                 ipsa eveniet et.
               </div>
