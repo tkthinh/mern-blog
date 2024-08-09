@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Alert, Spinner } from 'flowbite-react';
+import { Alert, Button, Spinner } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
 
 interface FormData {
@@ -52,6 +52,14 @@ export default function SignUp() {
         <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900'>
           Create an account
         </h2>
+      </div>
+
+      <div className='mt-2 sm:mx-auto sm:w-full sm:max-w-sm h-6'>
+        {errorMessage && (
+          <Alert color='failure' icon={HiInformationCircle}>
+            <span className='font-medium'>{errorMessage}</span>
+          </Alert>
+        )}
       </div>
 
       <div className='mt-10 sm:mx-auto sm:w-full sm:max-w-sm'>
@@ -131,10 +139,7 @@ export default function SignUp() {
           </div>
 
           <div>
-            <button
-              type='submit'
-              className='flex w-full justify-center rounded-md bg-cyan-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-cyan-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500'
-            >
+            <Button type='submit' className='flex w-full justify-center'>
               {loading ? (
                 <>
                   <Spinner size='sm' />
@@ -143,15 +148,7 @@ export default function SignUp() {
               ) : (
                 'Sign up'
               )}
-            </button>
-          </div>
-
-          <div>
-            {errorMessage && (
-              <Alert color='failure' icon={HiInformationCircle}>
-                <span className='font-medium'>{errorMessage}</span>
-              </Alert>
-            )}
+            </Button>
           </div>
         </form>
 
