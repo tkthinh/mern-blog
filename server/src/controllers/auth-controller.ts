@@ -90,6 +90,8 @@ export async function signin(req: Request, res: Response, next: NextFunction) {
       message: {
         id: existingUser.id,
         username: existingUser.username,
+        email: existingUser.email,
+        photoUrl: existingUser.photoUrl
       },
     };
 
@@ -130,6 +132,8 @@ export async function signinWithGoogle(
         message: {
           id: existingUser.id,
           username: existingUser.username,
+          email: existingUser.email,
+          photoUrl: existingUser.photoUrl
         },
       };
 
@@ -166,6 +170,8 @@ export async function signinWithGoogle(
         message: {
           id: uid,
           username: name,
+          email: email,
+          photoUrl: photoUrl
         },
       };
 
