@@ -5,6 +5,7 @@ export const user = pgTable('users', {
   username: varchar('name').unique().notNull(),
   email: varchar('email').unique().notNull(),
   password: varchar('password').notNull(),
+  photoUrl: text('photoUrl').$default(() =>'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'),
   createdAt: timestamp('created_at').defaultNow()
 });
 
