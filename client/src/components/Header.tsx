@@ -1,10 +1,15 @@
 import { Avatar, Dropdown, Navbar, TextInput } from 'flowbite-react';
-
 import { FiEdit } from 'react-icons/fi';
 import { CiSearch, CiLight } from 'react-icons/ci';
 
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import type { RootState } from '../redux/store';
+
 export default function Header() {
-  const status = 'authenticated';
+  const path = useLocation().pathname;
+  const { currentUser } = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate()
 
   return (
     <header className='h-18 w-full mb-4 border-b-[1px] shadow-sm border-gray-300 bg-white'>
@@ -29,7 +34,7 @@ export default function Header() {
             <button className='text-2xl'>
               <CiLight />
             </button>
-            {status === 'authenticated' ? (
+            {currentUser ? (
               <>
                 <button className='hidden md:flex items-center gap-2 rounded border border-gray-300 px-4 py-2 transition hover:border-cyan-500 hover:text-gray-900'>
                   Write
@@ -43,26 +48,26 @@ export default function Header() {
                   label={
                     <Avatar
                       alt='User settings'
-                      img='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
+                      img= {currentUser.photoUrl}
                       rounded
                     />
                   }
                 >
                   <Dropdown.Header>
-                    <span className='block text-sm'>Bonnie Green</span>
+                    <span className='block text-sm font-bold'>@{currentUser.username}</span>
                     <span className='block truncate text-sm font-medium'>
-                      name@flowbite.com
+                    {currentUser.email}
                     </span>
                   </Dropdown.Header>
-                  <Dropdown.Item>Dashboard</Dropdown.Item>
-                  <Dropdown.Item>Write Blog</Dropdown.Item>
-                  <Dropdown.Item>My Reading List</Dropdown.Item>
+                  <Dropdown.Item><Link to={'/'}>Dashboard</Link></Dropdown.Item>
+                  <Dropdown.Item><Link to={'/'}>Create Post</Link></Dropdown.Item>
+                  <Dropdown.Item><Link to={'/'}>My Reading List</Link></Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item>Sign out</Dropdown.Item>
                 </Dropdown>
               </>
             ) : (
-              <button className='flex items-center rounded border border-gray-300 px-4 py-2 transition hover:border-cyan-500 hover:text-gray-900'>
+              <button className='flex items-center rounded border border-gray-300 px-4 py-2 transition hover:border-cyan-500 hover:text-gray-900' onClick={() => navigate('/signin')}>
                 Sign in
               </button>
             )}
