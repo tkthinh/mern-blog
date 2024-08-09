@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../redux/store';
 import { signInStart, signInSuccess, signInFailed } from '../redux/userSlice';
 
-import { Alert, Spinner } from 'flowbite-react';
+import { Alert, Spinner, Button } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
+import OAuth from '../components/OAuth';
 
 interface FormData {
   username?: string;
@@ -54,6 +55,14 @@ export default function SignIn() {
         <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900'>
           Sign in to your account
         </h2>
+      </div>
+
+      <div className='mt-2 sm:mx-auto sm:w-full sm:max-w-sm h-6'>
+        {errorMessage && (
+          <Alert color='failure' icon={HiInformationCircle}>
+            <span className='font-medium'>{errorMessage}</span>
+          </Alert>
+        )}
       </div>
 
       <div className='mt-10 sm:mx-auto sm:w-full sm:max-w-sm'>
@@ -107,9 +116,10 @@ export default function SignIn() {
           </div>
 
           <div>
-            <button
+            <Button
               type='submit'
-              className='flex w-full justify-center rounded-md bg-cyan-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-cyan-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500'
+              className='flex w-full justify-center'
+              size='md'
             >
               {loading ? (
                 <>
@@ -119,16 +129,10 @@ export default function SignIn() {
               ) : (
                 'Sign in'
               )}
-            </button>
+            </Button>
           </div>
 
-          <div>
-            {errorMessage && (
-              <Alert color='failure' icon={HiInformationCircle}>
-                <span className='font-medium'>{errorMessage}</span>
-              </Alert>
-            )}
-          </div>
+          <OAuth />
         </form>
 
         <p className='mt-10 text-center text-sm text-gray-500'>

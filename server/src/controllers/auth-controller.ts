@@ -85,21 +85,98 @@ export async function signin(req: Request, res: Response, next: NextFunction) {
       },
       process.env.JWT_SECRET!
     );
+
+    const responseData = {
+      message: {
+        id: existingUser.id,
+        username: existingUser.username,
+      },
+    };
+
     return res
-      .status(201)
+      .status(200)
       .cookie('access_token', token, {
         httpOnly: true,
       })
-      .json({ message: 'Sign in successfully!' });
+      .json(responseData);
   } catch (error) {
     return new ErrorWithCode(500, 'Error verifying user credentials');
   }
 }
 
-export function loginWithGoogle(
+export async function signinWithGoogle(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  res.send('Google Page');
+  const { uid, email, name, photoUrl } = req.body;
+  try {
+    const existingEmail = await db
+      .select()
+      .from(user)
+      .where(eq(user.email, email));
+
+    if (existingEmail.length > 0) {
+      const existingUser = existingEmail[0];
+
+      const token = jwt.sign(
+        {
+          id: existingUser.id,
+        },
+        process.env.JWT_SECRET!
+      );
+
+      const responseData = {
+        message: {
+          id: existingUser.id,
+          username: existingUser.username,
+        },
+      };
+
+      return res
+        .status(200)
+        .cookie('access_token', token, {
+          httpOnly: true,
+        })
+        .json(responseData);
+
+    } else {
+      const tempPassword = Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(tempPassword, 10);
+
+      const userInfo = {
+        username:
+          name.toLowerCase().split(' ').join('') +
+          Math.random().toString(9).slice(-4),
+        email,
+        password: hashedPassword,
+        photoUrl: photoUrl,
+      };
+
+      await db.insert(user).values(userInfo).finally();
+      
+      const token = jwt.sign(
+        {
+          id: uid,
+        },
+        process.env.JWT_SECRET!
+      );
+
+      const responseData = {
+        message: {
+          id: uid,
+          username: name,
+        },
+      };
+
+      return res
+        .status(200)
+        .cookie('access_token', token, {
+          httpOnly: true,
+        })
+        .json(responseData);
+    }
+  } catch (error) {
+    return next(new ErrorWithCode(500, 'An error ocurred signing up user'));
+  }
 }
