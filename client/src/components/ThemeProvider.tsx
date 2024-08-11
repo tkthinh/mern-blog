@@ -6,7 +6,7 @@ export default function ThemeProvider({children}: React.PropsWithChildren) {
 
   return (
     <div className={theme}>
-      <div className='min-h-screen dark:text-gray-200 dark:bg-neutral-800'>
+      <div className='min-h-screen dark:text-gray-200 dark:bg-neutral-800 transition-colors duration-300'>
         {children}
       </div>
     </div>
