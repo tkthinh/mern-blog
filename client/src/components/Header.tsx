@@ -3,7 +3,7 @@ import { FiEdit } from 'react-icons/fi';
 import { CiSearch, CiLight } from 'react-icons/ci';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import type { RootState } from '../redux/store';
 
 import {toggleTheme} from '../redux/themeSlice'
@@ -39,7 +39,7 @@ export default function Header() {
             </button>
             {currentUser ? (
               <>
-                <button className='hidden md:flex items-center gap-2 px-4 py-2 rounded border transition border-blue-500 hover:bg-blue-500 hover:text-white'>
+                <button className='hidden md:flex primary-btn'>
                   Write
                   <div>
                     <FiEdit />
@@ -62,15 +62,16 @@ export default function Header() {
                     {currentUser.email}
                     </span>
                   </Dropdown.Header>
-                  <Dropdown.Item><Link to={'/'}>Dashboard</Link></Dropdown.Item>
-                  <Dropdown.Item><Link to={'/'}>Create Post</Link></Dropdown.Item>
-                  <Dropdown.Item><Link to={'/'}>My Reading List</Link></Dropdown.Item>
+                  <Dropdown.Item href={`/user/${currentUser.id}`}>Profile</Dropdown.Item>
+                  <Dropdown.Item href={'/new-post'}>Create Post</Dropdown.Item>
+                  <Dropdown.Item href={'/reading-list'}>My Reading List</Dropdown.Item>
+                  <Dropdown.Item href={'/setting'}>Settings</Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item>Sign out</Dropdown.Item>
                 </Dropdown>
               </>
             ) : (
-              <button className='flex items-center rounded border px-4 py-2 transition border-blue-500 hover:bg-blue-500 hover:text-white' onClick={() => navigate('/signin')}>
+              <button className='flex secondary-btn' onClick={() => navigate('/signin')}>
                 Sign in
               </button>
             )}

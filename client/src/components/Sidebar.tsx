@@ -16,7 +16,7 @@ export default function Sidebar() {
               </div>
             </div>
             <div>
-              <button className="flex items-center space-x-3 rounded border border-blue-500 px-4 py-2 transition hover:bg-blue-500 hover:text-white">
+              <button className="flex secondary-btn">
                 Follow
               </button>
             </div>
