@@ -12,10 +12,7 @@ import { ErrorWithCode } from '../lib/custom-error';
 import { eq } from 'drizzle-orm';
 
 async function userIsExisted(username: string) {
-  const userData = await db
-    .select()
-    .from(user)
-    .where(eq(user.username, username));
+  const userData = await db.select().from(user).where(eq(user.username, username));
 
   if (userData.length > 0) {
     return userData[0];
@@ -33,9 +30,7 @@ export async function signup(req: Request, res: Response, next: NextFunction) {
     !validateUser(username, email, password) ||
     !passwordIsConfirmed(password, confirmedPassword)
   ) {
-    return next(
-      new ErrorWithCode(400, 'Please fill out and check all information')
-    );
+    return next(new ErrorWithCode(400, 'Please fill out and check all information'));
   }
 
   const hashedPassword = bcryptjs.hashSync(password, 10);
@@ -91,7 +86,7 @@ export async function signin(req: Request, res: Response, next: NextFunction) {
         id: existingUser.id,
         username: existingUser.username,
         email: existingUser.email,
-        photoUrl: existingUser.photoUrl
+        photoUrl: existingUser.photoUrl,
       },
     };
 
@@ -106,17 +101,10 @@ export async function signin(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function signinWithGoogle(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export async function signinWithGoogle(req: Request, res: Response, next: NextFunction) {
   const { uid, email, name, photoUrl } = req.body;
   try {
-    const existingEmail = await db
-      .select()
-      .from(user)
-      .where(eq(user.email, email));
+    const existingEmail = await db.select().from(user).where(eq(user.email, email));
 
     if (existingEmail.length > 0) {
       const existingUser = existingEmail[0];
@@ -133,7 +121,7 @@ export async function signinWithGoogle(
           id: existingUser.id,
           username: existingUser.username,
           email: existingUser.email,
-          photoUrl: existingUser.photoUrl
+          photoUrl: existingUser.photoUrl,
         },
       };
 
@@ -143,22 +131,26 @@ export async function signinWithGoogle(
           httpOnly: true,
         })
         .json(responseData);
-
     } else {
       const tempPassword = Math.random().toString(36).slice(-8);
       const hashedPassword = bcryptjs.hashSync(tempPassword, 10);
 
       const userInfo = {
-        username:
-          name.toLowerCase().split(' ').join('') +
-          Math.random().toString(9).slice(-4),
+        username: name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
         email,
         password: hashedPassword,
         photoUrl: photoUrl,
       };
 
-      await db.insert(user).values(userInfo).finally();
-      
+      const insertedUser = await db.insert(user).values(userInfo).returning({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        photoUrl: user.photoUrl,
+      });
+
+      const newUser = insertedUser[0];
+
       const token = jwt.sign(
         {
           id: uid,
@@ -168,10 +160,10 @@ export async function signinWithGoogle(
 
       const responseData = {
         message: {
-          id: uid,
-          username: name,
-          email: email,
-          photoUrl: photoUrl
+          id: newUser.id,
+          username: newUser.username,
+          email: newUser.email,
+          photoUrl: newUser.photoUrl,
         },
       };
 
