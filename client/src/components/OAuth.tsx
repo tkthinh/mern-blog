@@ -5,7 +5,7 @@ import { FcGoogle } from 'react-icons/fc';
 
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { signInSuccess, signInFailed } from '../redux/userSlice';
+import { actionStart, actionFailed } from '../redux/userSlice';
 
 export default function OAuth() {
   const auth = getAuth(app);
@@ -31,11 +31,11 @@ export default function OAuth() {
 
       const data = await res.json();
       if (res.ok) {
-        dispatch(signInSuccess(data.message));
+        dispatch(actionStart(data.message));
         navigate('/');
       }
     } catch (error) {
-      dispatch(signInFailed((error as Error).message));
+      dispatch(actionFailed((error as Error).message));
     }
   }
 
