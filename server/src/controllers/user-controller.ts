@@ -1,4 +1,4 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../lib/authenticated-request';
 
 import { ErrorWithCode } from '../lib/custom-error';
@@ -64,10 +64,12 @@ export async function changePassword(
   const newPassword = req.body['new-password'];
   const confirmedPassword = req.body['confirm-password'];
 
-  const storedPassword = (await db.select({password: user.password}).from(user).where(eq(user.id, req.user.id)))[0].password;
-  const passwordMatched = await bcryptjs.compare(currentPassword, storedPassword)
+  const storedPassword = (
+    await db.select({ password: user.password }).from(user).where(eq(user.id, req.user.id))
+  )[0].password;
+  const passwordMatched = await bcryptjs.compare(currentPassword, storedPassword);
 
-  if(!passwordMatched){
+  if (!passwordMatched) {
     return next(new ErrorWithCode(400, 'Current password is incorrect'));
   }
 
@@ -97,5 +99,13 @@ export async function changePassword(
     res.status(200).json(responseData);
   } catch (error) {
     return next(new ErrorWithCode(500, 'Error changing user password'));
+  }
+}
+
+export function signout(req: Request, res: Response, next: NextFunction) {
+  try {
+    return res.clearCookie('access_token').status(200).json('Signed out');
+  } catch (error) {
+    return next(new ErrorWithCode(500, 'Error signing out'));
   }
 }

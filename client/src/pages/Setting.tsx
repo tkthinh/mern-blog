@@ -40,7 +40,7 @@ export default function () {
   function handleFormInput(event: ChangeEvent<HTMLInputElement>) {
     setFormData({ ...formData, [event.target.id]: event.target.value });
   }
-  console.log(formData);
+
   async function handleProfileUpdate(event: React.ChangeEvent<HTMLFormElement>) {
     event.preventDefault();
     try {

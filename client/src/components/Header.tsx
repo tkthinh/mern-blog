@@ -2,17 +2,35 @@ import { Avatar, Dropdown, Navbar, TextInput } from 'flowbite-react';
 import { FiEdit } from 'react-icons/fi';
 import { CiSearch, CiLight } from 'react-icons/ci';
 
-import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+
+import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../redux/store';
 
-import {toggleTheme} from '../redux/themeSlice'
+import { toggleTheme } from '../redux/themeSlice';
+import { actionClear } from '../redux/userSlice';
 
 export default function Header() {
   const { currentUser } = useSelector((state: RootState) => state.user);
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  async function handleSignout() {
+    try {
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      }
+      dispatch(actionClear());
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <header className='h-18 w-full mb-4 border-b-[1px] shadow-sm border-gray-300 bg-white'>
@@ -48,18 +66,12 @@ export default function Header() {
                 <Dropdown
                   arrowIcon={false}
                   inline
-                  label={
-                    <Avatar
-                      alt='User settings'
-                      img= {currentUser.photoUrl}
-                      rounded
-                    />
-                  }
+                  label={<Avatar alt='User settings' img={currentUser.photoUrl} rounded />}
                 >
                   <Dropdown.Header>
                     <span className='block text-sm font-bold'>@{currentUser.username}</span>
                     <span className='block truncate text-sm font-medium'>
-                    {currentUser.email}
+                      {currentUser.email}
                     </span>
                   </Dropdown.Header>
                   <Dropdown.Item href={`/user/${currentUser.id}`}>Profile</Dropdown.Item>
@@ -67,7 +79,7 @@ export default function Header() {
                   <Dropdown.Item href={'/reading-list'}>My Reading List</Dropdown.Item>
                   <Dropdown.Item href={'/setting'}>Settings</Dropdown.Item>
                   <Dropdown.Divider />
-                  <Dropdown.Item>Sign out</Dropdown.Item>
+                  <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
                 </Dropdown>
               </>
             ) : (
