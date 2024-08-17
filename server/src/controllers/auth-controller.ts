@@ -153,7 +153,7 @@ export async function signinWithGoogle(req: Request, res: Response, next: NextFu
 
       const token = jwt.sign(
         {
-          id: uid,
+          id: newUser.id,
         },
         process.env.JWT_SECRET!
       );
