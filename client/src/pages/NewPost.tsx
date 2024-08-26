@@ -1,7 +1,7 @@
 import { generateSlug } from '../libs/generate-slug';
 
 import { FaPlus } from 'react-icons/fa';
-import { useState, ChangeEvent, KeyboardEvent, useEffect } from 'react';
+import { useState, ChangeEvent, KeyboardEvent } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -14,6 +14,7 @@ import { app } from '../firebase';
 
 import Quill from '../components/Quill';
 import parse from 'html-react-parser';
+import { useNavigate } from 'react-router-dom';
 
 interface UploadMessage {
   success: boolean;
@@ -22,6 +23,7 @@ interface UploadMessage {
 
 export default function Home() {
   const user = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [actionMessage, setActionMessage] = useState<UploadMessage | null>(null);
@@ -128,7 +130,7 @@ export default function Home() {
         return dispatch(actionFailed(data.message));
       }
       dispatch(actionSuccess(data.message));
-
+      navigate(`/post/${data.post.id}`)
     } catch (error) {
       dispatch(actionFailed((error as Error).message));
     }
@@ -196,9 +198,10 @@ export default function Home() {
                     value={slug}
                     name='slug'
                     id='slug'
+                    disabled={true}
                     required={true}
                     className='block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cyan-500 sm:text-sm sm:leading-6'
-                    placeholder='Auto generated or modify at will'
+                    placeholder='Auto generated'
                   />
                 </div>
               </div>
