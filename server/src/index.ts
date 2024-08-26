@@ -19,7 +19,7 @@ app.use(CookieParser());
 
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
-app.use(postRoutes);
+app.use('/api/post', postRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
