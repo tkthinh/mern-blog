@@ -1,5 +1,6 @@
 export function generateSlug(title: string) {
-  const slug = title
+  if(title !== ''){
+    const slug = (title
     .normalize("NFD")                       // Normalize the string to separate base characters and diacritics
     .replace(/[\u0300-\u036f]/g, "")        // Remove diacritics
     .toLowerCase()                          // Convert the title to lowercase
@@ -7,7 +8,11 @@ export function generateSlug(title: string) {
     .replace(/[^\w\-]+/g, "")               // Remove non-word characters except dashes
     .replace(/\-\-+/g, "-")                 // Replace multiple consecutive dashes with a single dash
     .replace(/^\-+/, "")                    // Remove dashes from the beginning
-    .replace(/\-+$/, "");                   // Remove dashes from the end
+    .replace(/\-+$/, ""))+ `-${(Math.random() + 1).toString(36).substring(7)}`;                   // Remove dashes from the end
   
-  return slug;
+  return slug ;
+  } else {
+    return '';
+  }
+  
 }
