@@ -57,7 +57,7 @@ export default function Header() {
             </button>
             {currentUser ? (
               <>
-                <button className='hidden md:flex primary-btn'>
+                <button className='hidden md:flex primary-btn' onClick={() => navigate('/new-post')}>
                   Write
                   <div>
                     <FiEdit />

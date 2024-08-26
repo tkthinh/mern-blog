@@ -8,6 +8,7 @@ import PostDetail from './pages/PostDetail';
 import User from './pages/User';
 import ProtectedRoute from './components/ProtectedRoute';
 import Setting from './pages/Setting';
+import NewPost from './pages/NewPost';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path='/post' element={<PostDetail />} />
         <Route element={<ProtectedRoute />}>
           <Route path='/setting' element={<Setting />} />
+          <Route path='/new-post' element={<NewPost />} />
         </Route>
         <Route path='/user/:id' element={<User />} />
         <Route path='/signin' element={<SignIn />} />

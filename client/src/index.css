@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  ul, ol {
+    list-style: revert;
+  }
+}
+
 .primary-btn{
   @apply items-center gap-2 px-4 py-2 rounded transition bg-blue-600 hover:bg-blue-800 text-white;
 }
