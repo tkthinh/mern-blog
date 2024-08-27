@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
 import { actionStart, actionSuccess, actionFailed } from '../redux/userSlice';
 
-import { Alert } from 'flowbite-react';
+import { Alert, Spinner } from 'flowbite-react';
 
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { app } from '../firebase';
@@ -99,7 +99,7 @@ export default function Home() {
     event.preventDefault();
     try {
       dispatch(actionStart());
-  
+
       const uploadedPosterUrl = await uploadPoster(); // Wait for poster to upload and get the URL
       if (!uploadedPosterUrl) {
         setActionMessage({
@@ -108,29 +108,29 @@ export default function Home() {
         });
         return;
       }
-  
+
       const newBlog = {
         author: user.currentUser?.id,
         title,
-        posterUrl: uploadedPosterUrl, 
+        posterUrl: uploadedPosterUrl,
         slug,
         tagList,
         description,
         content,
       };
-  
+
       const res = await fetch('/api/post/new', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(newBlog)
-      })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newBlog),
+      });
 
       const data = await res.json();
-      if(!res.ok){
+      if (!res.ok) {
         return dispatch(actionFailed(data.message));
       }
       dispatch(actionSuccess(data.message));
-      navigate(`/post/${data.post.id}`)
+      navigate(`/post/${data.post.id}`);
     } catch (error) {
       dispatch(actionFailed((error as Error).message));
     }
@@ -264,10 +264,19 @@ export default function Home() {
               </div>
             </div>
             <button type='submit' className='primary-btn flex mt-4'>
-              <div>
-                <FaPlus className='w-5 h-5 mr-2' />
-              </div>
-              Write Post
+              {user.loading ? (
+                <>
+                  <Spinner size='sm' />
+                  <span className='px-2'>Loading...</span>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <FaPlus className='w-5 h-5 mr-2' />
+                  </div>
+                  Write Post
+                </>
+              )}
             </button>
           </form>
         </div>
@@ -288,22 +297,32 @@ export default function Home() {
             </div>
             {/* Title */}
             <div className='sm:col-span-2'>
-              {title === '' ? (<h2 className='block mb-2 text-sm font-medium dark:text-white'>Blog Titlte</h2>):
-              <div className='mt-2'>
-                <p className='text-2xl font-bold'>{title}</p>
-              </div>
-              }
+              {title === '' ? (
+                <h2 className='block mb-2 text-sm font-medium dark:text-white'>Blog Titlte</h2>
+              ) : (
+                <div className='mt-2'>
+                  <p className='text-2xl font-bold'>{title}</p>
+                </div>
+              )}
             </div>
             {/* Tags */}
             <div className='sm:col-span-2'>
-              {tagList.length === 0 ? (<h2 className='block mb-2 text-sm font-medium dark:text-white'>Blog Tags</h2>) : tagList.map(tag => (<a href='#' className='mr-4 underline'>#{tag}</a>))}
+              {tagList.length === 0 ? (
+                <h2 className='block mb-2 text-sm font-medium dark:text-white'>Blog Tags</h2>
+              ) : (
+                tagList.map((tag) => (
+                  <a href='#' className='mr-4 underline'>
+                    #{tag}
+                  </a>
+                ))
+              )}
             </div>
             <div className='sm:col-span-full'>
-            {content === '' ? (<h2 className='block mb-2 text-sm font-medium dark:text-white'>Blog Content</h2>):
-              <div className='mt-2'>
-                {parse(content)}
-              </div>
-              }
+              {content === '' ? (
+                <h2 className='block mb-2 text-sm font-medium dark:text-white'>Blog Content</h2>
+              ) : (
+                <div className='mt-2'>{parse(content)}</div>
+              )}
             </div>
           </div>
         </div>
