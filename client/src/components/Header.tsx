@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../redux/store';
 
 import { toggleTheme } from '../redux/themeSlice';
-import { actionClear } from '../redux/userSlice';
+import { userClear } from '../redux/userSlice';
 
 export default function Header() {
   const { currentUser } = useSelector((state: RootState) => state.user);
@@ -25,7 +25,7 @@ export default function Header() {
       if (!res.ok) {
         console.log(data.message);
       }
-      dispatch(actionClear());
+      dispatch(userClear());
       navigate('/');
     } catch (error) {
       console.log(error);

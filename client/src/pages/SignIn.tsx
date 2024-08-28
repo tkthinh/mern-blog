@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../redux/store';
-import { actionStart, actionSuccess, actionFailed } from '../redux/userSlice';
+import { userStart, userSuccess, userFailed } from '../redux/userSlice';
 
 import { Alert, Spinner, Button } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
@@ -30,7 +30,7 @@ export default function SignIn() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      dispatch(actionStart());
+      dispatch(userStart());
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -40,12 +40,12 @@ export default function SignIn() {
       const data = await res.json();
 
       if (!res.ok) {
-        return dispatch(actionFailed(data.message));
+        return dispatch(userFailed(data.message));
       }
-      dispatch(actionSuccess(data.message));
+      dispatch(userSuccess(data.message));
       navigate('/');
     } catch (error) {
-      dispatch(actionFailed((error as Error).message));
+      dispatch(userFailed((error as Error).message));
     }
   }
 

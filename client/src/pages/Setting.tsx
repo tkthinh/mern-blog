@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
-import { actionStart, actionSuccess, actionFailed } from '../redux/userSlice';
+import { userStart, userSuccess, userFailed } from '../redux/userSlice';
 
 import { Button, Alert } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -44,7 +44,7 @@ export default function () {
   async function handleProfileUpdate(event: React.ChangeEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      dispatch(actionStart());
+      dispatch(userStart());
       const res = await fetch(`/api/user/update/${currentUser?.id}`, {
         method: 'POST',
         headers: {
@@ -55,22 +55,22 @@ export default function () {
 
       const data = await res.json();
       if (!res.ok) {
-        return dispatch(actionFailed(data.message));
+        return dispatch(userFailed(data.message));
       }
-      dispatch(actionSuccess(data.message));
+      dispatch(userSuccess(data.message));
       setActionMessage({
         success: true,
         message: 'User info changed',
       });
     } catch (error) {
-      dispatch(actionFailed((error as Error).message));
+      dispatch(userFailed((error as Error).message));
     }
   }
 
   async function handleChangePassword(event: React.ChangeEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      dispatch(actionStart());
+      dispatch(userStart());
       const res = await fetch(`/api/user/change-password/${currentUser?.id}`, {
         method: 'POST',
         headers: {
@@ -81,15 +81,15 @@ export default function () {
 
       const data = await res.json();
       if (!res.ok) {
-        return dispatch(actionFailed(data.message));
+        return dispatch(userFailed(data.message));
       }
-      dispatch(actionSuccess(data.message));
+      dispatch(userSuccess(data.message));
       setActionMessage({
         success: true,
         message: 'Password changed',
       });
     } catch (error) {
-      dispatch(actionFailed((error as Error).message));
+      dispatch(userFailed((error as Error).message));
     }
   }
 

@@ -5,7 +5,7 @@ import { useState, ChangeEvent, KeyboardEvent } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
-import { actionStart, actionSuccess, actionFailed } from '../redux/userSlice';
+import { actionStart, actionFailed, actionSuccess } from '../redux/actionSlice';
 
 import { Alert, Spinner } from 'flowbite-react';
 
@@ -99,6 +99,14 @@ export default function Home() {
     event.preventDefault();
     try {
       dispatch(actionStart());
+
+      if(!tagList || tagList.length === 0 ){
+        setActionMessage({
+          success: false,
+          message: 'Post must contain at least 1 tag',
+        });
+        return;
+      }
 
       const uploadedPosterUrl = await uploadPoster(); // Wait for poster to upload and get the URL
       if (!uploadedPosterUrl) {
