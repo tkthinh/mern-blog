@@ -1,8 +1,12 @@
 import { Router } from 'express';
-import createNewPost from '../controllers/post-controller';
+import { createNewPost, fetchAllPosts, fetchOnePost, searchPosts } from '../controllers/post-controller';
+import { verifyToken } from '../lib/verify-user';
 
 const postRoutes = Router();
 
-postRoutes.post('/new', createNewPost)
+postRoutes.get('/get', fetchAllPosts);
+postRoutes.get('/search', searchPosts);
+postRoutes.get('/p/:id', fetchOnePost);
+postRoutes.post('/new', verifyToken, createNewPost);
 
 export default postRoutes;
