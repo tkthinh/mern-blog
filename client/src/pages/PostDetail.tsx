@@ -7,37 +7,19 @@ import { useParams } from 'react-router-dom';
 import { Alert, Spinner } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
 
-interface Post {
+interface PostData {
   id: string;
   title: string;
-  description: string;
   content: string;
-  authorId: string;
-  slug: string;
   poster: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Author {
-  id: string;
-  username: string;
-  email: string;
-  password: string;
-  photoUrl: string;
-  createdAt: string;
-}
-
-interface Tag {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface PostData {
-  post: Post;
-  author: Author;
-  tags: Tag[];
+  authorId: string;
+  createdAt: Date;
+  postTags: {
+    tagId: string;
+    tag: {
+      name: string;
+    };
+  }[];
 }
 
 export default function PostDetail() {
@@ -52,7 +34,7 @@ export default function PostDetail() {
     const fetchData = async () => {
       try {
         dispatch(actionStart());
-        const res = await fetch(`/api/post/${id}`);
+        const res = await fetch(`/api/post/p/${id}`);
 
         const data = await res.json();
         if (!res.ok) {
@@ -86,18 +68,20 @@ export default function PostDetail() {
         <div className='mx-auto max-w-6xl flex flex-col gap-6 p-4 md:px-8 md:py-6'>
           <div className='w-full h-auto md:h-[50vh]'>
             <img
-              src={postData.post.poster}
+              src={postData.poster}
               alt='Poster'
               className='w-full h-full mx-auto aspect-[21/9] object-cover rounded'
             />
           </div>
-          <h1>{postData.post.title}</h1>
+          <h1>{postData.title}</h1>
           <div className='flex gap-x-3'>
-            {postData.tags.map((tag) => (
-              <a className='underline' key={tag.id} href={`/t/${tag.slug}`}>#{tag.name}</a>
+            {postData.postTags.map((tag) => (
+              <a className='underline' key={tag.tagId} href={`/t/${tag.tagId}`}>
+                #{tag.tag.name}
+              </a>
             ))}
           </div>
-          {parse(postData.post.content)}
+          {parse(postData.content)}
         </div>
       )}
     </>
