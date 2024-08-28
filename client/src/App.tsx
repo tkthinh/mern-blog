@@ -16,7 +16,7 @@ export default function App() {
       <Header />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/post' element={<PostDetail />} />
+        <Route path='/post/:id' element={<PostDetail />} />
         <Route element={<ProtectedRoute />}>
           <Route path='/setting' element={<Setting />} />
           <Route path='/new-post' element={<NewPost />} />

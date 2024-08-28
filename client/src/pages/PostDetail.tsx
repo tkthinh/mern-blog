@@ -1,12 +1,105 @@
+import { useEffect, useState } from 'react';
+import parse from 'html-react-parser';
+import { RootState } from '../redux/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { actionStart, actionSuccess, actionFailed } from '../redux/actionSlice';
+import { useParams } from 'react-router-dom';
+import { Alert, Spinner } from 'flowbite-react';
+import { HiInformationCircle } from 'react-icons/hi';
+
+interface Post {
+  id: string;
+  title: string;
+  description: string;
+  content: string;
+  authorId: string;
+  slug: string;
+  poster: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Author {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+  photoUrl: string;
+  createdAt: string;
+}
+
+interface Tag {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface PostData {
+  post: Post;
+  author: Author;
+  tags: Tag[];
+}
+
 export default function PostDetail() {
+  const { id } = useParams();
+
+  const [postData, setPostData] = useState<PostData>();
+
+  const { loading, error: errorMessage } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch(actionStart());
+        const res = await fetch(`/api/post/${id}`);
+
+        const data = await res.json();
+        if (!res.ok) {
+          return dispatch(actionFailed(data.message));
+        }
+        setPostData(data);
+        dispatch(actionSuccess(data.message));
+      } catch (error) {
+        dispatch(actionFailed((error as Error).message));
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
   return (
-    <div className="mx-auto max-w-6xl flex flex-col gap-6 p-4 md:px-8 md:py-6">
-      <div className="w-full h-auto md:h-[50vh]">
-        <img src="https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf" alt="Poster"  className="h-full w-auto mx-auto object-contain rounded"/>
+    <>
+      <div className='my-2 sm:mx-auto sm:w-full sm:max-w-sm h-6'>
+        {errorMessage && (
+          <Alert color='failure' icon={HiInformationCircle}>
+            <span className='font-medium'>{errorMessage}</span>
+          </Alert>
+        )}
+        {loading ? (
+          <div className='text-center'>
+            <Spinner size='xl' />
+          </div>
+        ) : null}
       </div>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate quos porro facere. Quasi quibusdam iure qui animi quas obcaecati aspernatur facilis doloremque a placeat? Quia maiores illum ipsum ad officia? Beatae, dicta?</p>
-      <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Delectus magni aliquam dolore. Doloremque at dolorem ratione?</p>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil quod doloribus quasi neque, praesentium at consectetur delectus asperiores. Error, aut maxime. Nemo aliquam quisquam deserunt, quam ratione sequi provident, odio esse tempora, voluptate quaerat quia sint soluta ipsum molestias dolores maiores modi consequuntur ipsam eveniet sunt. Perferendis inventore aliquid eius nisi ad nostrum labore, cupiditate quasi eligendi odit, adipisci enim nulla totam? Dolores dignissimos, sint porro necessitatibus veritatis quae. Veritatis atque deleniti iusto modi culpa facilis, laboriosam ab iste maxime quod tempore.</p>
-    </div>
-  )
+      {postData && (
+        <div className='mx-auto max-w-6xl flex flex-col gap-6 p-4 md:px-8 md:py-6'>
+          <div className='w-full h-auto md:h-[50vh]'>
+            <img
+              src={postData.post.poster}
+              alt='Poster'
+              className='w-full h-full mx-auto aspect-[21/9] object-cover rounded'
+            />
+          </div>
+          <h1>{postData.post.title}</h1>
+          <div className='flex gap-x-3'>
+            {postData.tags.map((tag) => (
+              <a className='underline' key={tag.id} href={`/t/${tag.slug}`}>#{tag.name}</a>
+            ))}
+          </div>
+          {parse(postData.post.content)}
+        </div>
+      )}
+    </>
+  );
 }
