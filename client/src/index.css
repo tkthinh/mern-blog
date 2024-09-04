@@ -8,6 +8,10 @@
     list-style: revert;
   }
 
+  header ul {
+    list-style: none;
+  }
+
   h1 {
     @apply text-2xl font-extrabold;
   }

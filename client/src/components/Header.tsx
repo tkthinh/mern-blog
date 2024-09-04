@@ -33,7 +33,9 @@ export default function Header() {
   }
 
   return (
-    <header className='h-18 w-full mb-4 border-b-[1px] shadow-sm border-gray-300 bg-white'>
+    <header
+      className='h-18 w-full mb-4 border-b-[1px] shadow-sm border-gray-300 bg-white'
+    >
       <Navbar fluid rounded className='dark:text-gray-200 dark:bg-neutral-800'>
         <Navbar.Brand href='/' className=''>
           <div className='flex items-center justify-between gap-1 text-xl font-bold uppercase tracking-wide'>
@@ -57,7 +59,10 @@ export default function Header() {
             </button>
             {currentUser ? (
               <>
-                <button className='hidden md:flex primary-btn' onClick={() => navigate('/new-post')}>
+                <button
+                  className='hidden md:flex primary-btn'
+                  onClick={() => navigate('/new-post')}
+                >
                   Write
                   <div>
                     <FiEdit />
