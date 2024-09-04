@@ -10,16 +10,22 @@ export async function fetchAllPosts(req: Request, res: Response, next: NextFunct
     const startIndex = parseInt(`${req.query.startIndex}`) || 0;
     const limit = parseInt(`${req.query.limit}`) || 9;
 
-    const results =  await db.query.post.findMany({
+    const results = await db.query.post.findMany({
       columns: {
         id: true,
         title: true,
         content: true,
         poster: true,
-        authorId: true,
         createdAt: true,
       },
       with: {
+        author: {
+          columns: {
+            id: true,
+            username: true,
+            photoUrl: true,
+          },
+        },
         postTags: {
           columns: {
             tagId: true,
@@ -33,14 +39,14 @@ export async function fetchAllPosts(req: Request, res: Response, next: NextFunct
           },
         },
       },
+      orderBy: [desc(post.createdAt)],
       limit: limit,
-      offset: startIndex
-  });
+      offset: startIndex,
+    });
 
     if (!results) {
       return res.status(404).json({ message: 'Post not found' });
     }
-
 
     const [{ count }] = await db
       .select({ count: sql<number>`cast(count(distinct ${post.id}) as int)` })
@@ -74,10 +80,16 @@ export async function fetchOnePost(req: Request, res: Response, next: NextFuncti
         title: true,
         content: true,
         poster: true,
-        authorId: true,
         createdAt: true,
       },
       with: {
+        author: {
+          columns: {
+            id: true,
+            username: true,
+            photoUrl: true,
+          },
+        },
         postTags: {
           columns: {
             tagId: true,
@@ -91,8 +103,8 @@ export async function fetchOnePost(req: Request, res: Response, next: NextFuncti
           },
         },
       },
-      where: whereClause
-  })
+      where: whereClause,
+    });
 
     if (!result) {
       return res.status(404).json({ message: 'Post not found' });
@@ -118,6 +130,13 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
         createdAt: true,
       },
       with: {
+        author: {
+          columns: {
+            id: true,
+            username: true,
+            photoUrl: true,
+          },
+        },
         postTags: {
           columns: {
             tagId: true,
