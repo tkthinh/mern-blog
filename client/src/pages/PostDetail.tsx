@@ -56,7 +56,7 @@ export default function PostDetail() {
 
   return (
     <>
-      <div className='my-2 sm:mx-auto sm:w-full sm:max-w-sm h-6'>
+      <div className='my-2 sm:mx-auto sm:w-full sm:max-w-sm'>
         {errorMessage && (
           <Alert color='failure' icon={HiInformationCircle}>
             <span className='font-medium'>{errorMessage}</span>
@@ -79,7 +79,7 @@ export default function PostDetail() {
           </div>
           <h1>{postData.title}</h1>
           <div className='flex items-center space-x-5'>
-            <a href='/'>
+            <a href={`/user/${[postData.author.id]}`}>
               <img
                 className='h-20 w-20 flex-none rounded-full'
                 src={postData.author.photoUrl}
@@ -88,8 +88,8 @@ export default function PostDetail() {
             </a>
 
             <div className='space-y-1'>
-              <a href='/' className='text-sm font-bold text-gray-900 dark:text-gray-100'>
-                Anh Liêm
+              <a href={`/user/${[postData.author.id]}`} className='text-sm font-bold text-gray-900 dark:text-gray-100'>
+                {postData.author.username}
               </a>
               <div className='text-xs line-clamp-2 lg:line-clamp-3'>
                 <span>Created at </span>

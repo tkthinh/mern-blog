@@ -9,6 +9,28 @@ import { db } from '../db/db';
 import { user } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
+export async function getUserInfo(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await db.query.user.findFirst({
+      columns: {
+        username: true,
+        photoUrl: true,
+        createdAt: true,
+      },
+      where: eq(user.id, req.params.id),
+    });
+
+    if(!result){
+      return next(new ErrorWithCode(404, 'User not found'));
+    };
+
+    res.status(200).json(result)
+
+  } catch (error) {
+    return next(new ErrorWithCode(500, 'Error getting user info'));
+  }
+}
+
 export async function updateUserInfo(
   req: AuthenticatedRequest,
   res: Response,

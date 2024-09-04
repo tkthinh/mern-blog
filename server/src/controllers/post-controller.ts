@@ -14,7 +14,6 @@ export async function fetchAllPosts(req: Request, res: Response, next: NextFunct
       columns: {
         id: true,
         title: true,
-        content: true,
         poster: true,
         createdAt: true,
       },
@@ -124,8 +123,8 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
       columns: {
         id: true,
         title: true,
-        content: true,
         poster: true,
+        description: true,
         authorId: true,
         createdAt: true,
       },
