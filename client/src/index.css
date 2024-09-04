@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,12 +19,14 @@
   }
 
   h2 {
-    @apply text-xl font-bold;
+    @apply text-xl font-slab font-bold;
+    font-family: 'Roboto Slab';
   }
 
   strong {
     @apply font-semibold;
   }
+
 }
 
 .primary-btn {
