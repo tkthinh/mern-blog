@@ -17,7 +17,7 @@ const actionSlice = createSlice({
     actionStart: (state) => {
       (state.loading = true), (state.error = null);
     },
-    actionSuccess: (state, action) => {
+    actionSuccess: (state) => {
       state.loading = false;
       state.error = null;
     },
