@@ -8,7 +8,7 @@ import { eq, inArray, desc, sql, or, like, and } from 'drizzle-orm';
 export async function fetchAllPosts(req: Request, res: Response, next: NextFunction) {
   try {
     const startIndex = parseInt(`${req.query.startIndex}`) || 0;
-    const limit = parseInt(`${req.query.limit}`) || 9;
+    const limit = parseInt(`${req.query.limit}`) || 6;
 
     const results = await db.query.post.findMany({
       columns: {
@@ -16,6 +16,7 @@ export async function fetchAllPosts(req: Request, res: Response, next: NextFunct
         title: true,
         poster: true,
         createdAt: true,
+        description: true
       },
       with: {
         author: {
