@@ -102,7 +102,7 @@ export async function signin(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function signinWithGoogle(req: Request, res: Response, next: NextFunction) {
-  const { uid, email, name, photoUrl } = req.body;
+  const { email, name, photoUrl } = req.body;
   try {
     const existingEmail = await db.select().from(user).where(eq(user.email, email));
 
@@ -136,7 +136,7 @@ export async function signinWithGoogle(req: Request, res: Response, next: NextFu
       const hashedPassword = bcryptjs.hashSync(tempPassword, 10);
 
       const userInfo = {
-        username: name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
+        username: name.normalize("NFD") .replace(/[\u0300-\u036f]/g, "").toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
         email,
         password: hashedPassword,
         photoUrl: photoUrl,
