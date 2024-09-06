@@ -71,7 +71,7 @@ export default function () {
     event.preventDefault();
     try {
       dispatch(userStart());
-      const res = await fetch(`/api/user/change-password/${currentUser?.id}`, {
+      const res = await fetch(`/api/auth/change-password/${currentUser?.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,6 +81,10 @@ export default function () {
 
       const data = await res.json();
       if (!res.ok) {
+        setActionMessage({
+          success: false,
+          message: data.message,
+        });
         return dispatch(userFailed(data.message));
       }
       dispatch(userSuccess(data.message));
@@ -89,6 +93,10 @@ export default function () {
         message: 'Password changed',
       });
     } catch (error) {
+      setActionMessage({
+        success: false,
+        message: 'Error changing password',
+      });
       dispatch(userFailed((error as Error).message));
     }
   }
