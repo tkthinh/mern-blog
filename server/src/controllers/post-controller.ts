@@ -3,7 +3,7 @@ import { ErrorWithCode } from '../lib/custom-error';
 
 import { db } from '../db/db';
 import { user, post, tag, postTags } from '../db/schema';
-import { eq, inArray, desc, sql, or, like, and } from 'drizzle-orm';
+import { eq, inArray, desc, sql, like } from 'drizzle-orm';
 
 export async function fetchAllPosts(req: Request, res: Response, next: NextFunction) {
   try {
@@ -45,7 +45,7 @@ export async function fetchAllPosts(req: Request, res: Response, next: NextFunct
     });
 
     if (!results) {
-      return res.status(404).json({ message: 'Post not found' });
+      return res.status(401).json({ message: 'No post found' });
     }
 
     const [{ count }] = await db
@@ -184,7 +184,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
 
     return res.status(200).json({ results });
   } catch (error) {
-    return next(new ErrorWithCode(500, 'Error fetching posts'));
+    return next(new ErrorWithCode(500, 'Error searching posts'));
   }
 }
 
