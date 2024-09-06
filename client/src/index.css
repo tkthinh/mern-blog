@@ -27,6 +27,10 @@
     @apply font-semibold;
   }
 
+  pre {
+    @apply p-1 bg-gray-300 text-black;
+  }
+
 }
 
 .primary-btn {
