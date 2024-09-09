@@ -10,6 +10,7 @@ import { handleError as errorHandlerMiddleware } from './middlewares/error-handl
 import userRoutes from './routes/user-routes';
 import authRoutes from './routes/auth-routes';
 import postRoutes from './routes/post-routes';
+import interactionRoutes from './routes/interaction-routes';
 
 const app = express();
 
@@ -17,9 +18,10 @@ app.use(urlencoded({ extended: true }));
 app.use(express.json());
 app.use(CookieParser());
 
-app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/ix', interactionRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ErrorWithCode } from '../lib/custom-error';
 
 import { db } from '../db/db';
-import { user, post, tag, postTags } from '../db/schema';
+import { user, post, tag, postTags, bookmark } from '../db/schema';
 import { eq, inArray, desc, sql, like } from 'drizzle-orm';
 
 export async function fetchAllPosts(req: Request, res: Response, next: NextFunction) {
@@ -10,13 +10,15 @@ export async function fetchAllPosts(req: Request, res: Response, next: NextFunct
     const startIndex = parseInt(`${req.query.startIndex}`) || 0;
     const limit = parseInt(`${req.query.limit}`) || 6;
 
+    const userId = req.query.userId;
+
     const results = await db.query.post.findMany({
       columns: {
         id: true,
         title: true,
         poster: true,
         createdAt: true,
-        description: true
+        description: true,
       },
       with: {
         author: {
@@ -38,6 +40,14 @@ export async function fetchAllPosts(req: Request, res: Response, next: NextFunct
             },
           },
         },
+        bookmarks: userId
+          ? {
+              columns: {
+                id: true,
+              },
+              where: eq(bookmark.userId, `${userId}`),
+            }
+          : undefined,
       },
       orderBy: [desc(post.createdAt)],
       limit: limit,
