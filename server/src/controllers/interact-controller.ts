@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ErrorWithCode } from '../lib/custom-error';
 
 import { db } from '../db/db';
-import { like, bookmark, comment } from '../db/schema';
+import { like, bookmark, comment, user } from '../db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 export async function fetchLike(req: Request, res: Response, next: NextFunction) {
@@ -67,12 +67,20 @@ export async function toggleLike(req: Request, res: Response, next: NextFunction
 }
 
 export async function addComment(req: Request, res: Response, next: NextFunction) {
-  const { userId, postId, comment } = req.body;
+  const { userId, postId, text } = req.body;
+
+  if (!userId || !postId || !text) {
+    return next(new ErrorWithCode(400, 'Bad request'));
+  }
 
   try {
-    const newComment = await db.insert(comment).values({ userId, postId, comment }).returning();
+    const newComment = await db
+      .insert(comment)
+      .values({ text, userId, postId })
+      .returning();
     return res.status(200).json(newComment);
   } catch (error) {
+    console.log(error)
     return next(new ErrorWithCode(500, 'Error commenting'));
   }
 }

@@ -26,7 +26,7 @@ export const comment = pgTable('comments', {
   id: uuid('id').primaryKey().defaultRandom(),
   text: varchar('text').notNull(),
   userId: uuid('user_id').references(() => user.id).notNull(),
-  postId: uuid('post_id').references(() => user.id).notNull(),
+  postId: uuid('post_id').references(() => post.id).notNull(),
   createdAt: timestamp('created_at').defaultNow()
 });
 
