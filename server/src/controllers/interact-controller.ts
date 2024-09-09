@@ -74,13 +74,10 @@ export async function addComment(req: Request, res: Response, next: NextFunction
   }
 
   try {
-    const newComment = await db
-      .insert(comment)
-      .values({ text, userId, postId })
-      .returning();
+    const newComment = await db.insert(comment).values({ text, userId, postId }).returning();
     return res.status(200).json(newComment);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return next(new ErrorWithCode(500, 'Error commenting'));
   }
 }
@@ -119,19 +116,25 @@ export async function fetchBookmark(req: Request, res: Response, next: NextFunct
   try {
     const results = await db.query.bookmark.findMany({
       columns: {
-        id: false,
+        id: true,
         postId: false,
         userId: false,
         createdAt: false,
       },
-      where: eq(bookmark.userId, `${userId}`),
       with: {
         post: {
           columns: {
             content: false,
           },
         },
+        user: {
+          columns: {
+            username: true,
+            photoUrl: true
+          },
+        },
       },
+      where: eq(bookmark.userId, `${userId}`),
     });
 
     if (results.length === 0) {
@@ -151,7 +154,6 @@ export async function toggleBookmark(req: Request, res: Response, next: NextFunc
     const existingBookmark = await db.query.bookmark.findFirst({
       columns: {
         id: true,
-        userId: true,
         postId: true,
       },
       where: and(eq(userId, bookmark.userId), eq(postId, bookmark.postId)),

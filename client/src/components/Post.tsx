@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { FormEvent, useState } from 'react';
 import { CiBookmarkCheck, CiBookmarkPlus } from 'react-icons/ci';
+import { actionFailed, actionStart, actionSuccess } from '../redux/actionSlice';
+import { useDispatch } from 'react-redux';
 
 interface PostProp {
   postInfo: PostInfo;
+  user?: {
+    id: string;
+    username: string;
+  };
 }
 
 interface PostInfo {
@@ -10,7 +16,7 @@ interface PostInfo {
   title: string;
   poster: string;
   createdAt: string;
-  description: string,
+  description: string;
   author: {
     id: string;
     username: string;
@@ -22,31 +28,66 @@ interface PostInfo {
       name: string;
     };
   }[];
+  bookmarks?: {
+    id: string;
+  };
 }
 
-const Post: React.FC<PostProp> = ({ postInfo }) => {
+const Post: React.FC<PostProp> = ({ postInfo, user }) => {
+  const dispatch = useDispatch();
+
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(postInfo.bookmarks?.id ? true : false);
+
+  async function handleBookmark(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    try {
+      dispatch(actionStart());
+      const res = await fetch(`/api/ix/bookmark`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.id,
+          postId: postInfo?.id,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        return dispatch(actionFailed(data.message));
+      }
+      setIsBookmarked(isBookmarked == true ? false : true)
+      dispatch(actionSuccess(data.message));
+    } catch (error) {
+      dispatch(actionFailed((error as Error).message));
+    }
+  }
+
   return (
-    <div
-      className='flex flex-col space-y-4 border-b border-gray-300 py-4 last:border-none'
-    >
+    <div className='flex flex-col space-y-4 border-b border-gray-300 py-4 last:border-none'>
       <a
         href={`/user/${postInfo.author.id}`}
         className='group flex w-full cursor-pointer items-center space-x-2'
       >
         <div className='relative'>
-          <img className='rounded-xl h-10 w-10' src={postInfo.author.photoUrl}/>
+          <img className='rounded-xl h-10 w-10' src={postInfo.author.photoUrl} />
         </div>
         <div>
           <p className='font-semibold'>
-            <span className='decoration-blue-500 group-hover:underline'>{postInfo.author.username}</span>{' '}
+            <span className='decoration-blue-500 group-hover:underline'>
+              {postInfo.author.username}
+            </span>{' '}
             &#x2022;
-            <span className='mx-1'>{new Date(postInfo.createdAt).toLocaleString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })}</span>
+            <span className='mx-1'>
+              {new Date(postInfo.createdAt).toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+              })}
+            </span>
           </p>
 
           <p className='text-sm'>Founder, teacher & developer</p>
@@ -66,7 +107,10 @@ const Post: React.FC<PostProp> = ({ postInfo }) => {
         </div>
         <div className='w-full h-full md:col-span-4'>
           <div>
-            <img className='h-full w-full transform rounded-xl bg-gray-300 transition duration-300 hover:scale-105 hover:shadow-xl' src={postInfo.poster}/>
+            <img
+              className='h-full w-full transform rounded-xl bg-gray-300 transition duration-300 hover:scale-105 hover:shadow-xl'
+              src={postInfo.poster}
+            />
           </div>
         </div>
       </a>
@@ -74,15 +118,29 @@ const Post: React.FC<PostProp> = ({ postInfo }) => {
         <div className='flex w-full items-center justify-between space-x-4'>
           <div className='flex items-center space-x-2'>
             {postInfo.postTags.map((tag) => (
-              <div key={`/search/tag?=${tag.tagId}`} className='rounded-2xl bg-gray-200/50 px-5 py-3'>
+              <div
+                key={`/search/tag?=${tag.tagId}`}
+                className='rounded-2xl bg-gray-200/50 px-5 py-3'
+              >
                 {tag.tag.name}
               </div>
             ))}
           </div>
-          <div>
-            <CiBookmarkCheck className='cursor-pointer text-3xl text-blue-500' />
-            <CiBookmarkPlus className='cursor-pointer text-3xl' />
-          </div>
+          <form onSubmit={handleBookmark}>
+            <button type='submit' disabled={user ? false : true}>
+            {user ? (
+              <>
+                {isBookmarked ? (
+                  <CiBookmarkCheck className='cursor-pointer text-3xl text-blue-500' />
+                ) : (
+                  <CiBookmarkPlus className='cursor-pointer text-3xl' />
+                )}
+              </>
+            ) : (
+              <CiBookmarkPlus className='cursor-not-allowed text-3xl'/>
+            )}
+            </button>
+          </form>
         </div>
       </div>
     </div>

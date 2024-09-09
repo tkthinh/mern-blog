@@ -24,6 +24,9 @@ interface PostInfo {
       name: string;
     };
   }[];
+  bookmarks: {
+    id: string;
+  };
 }
 
 export default function Feed() {
@@ -31,6 +34,7 @@ export default function Feed() {
 
   const [showMore, setShowMore] = useState<boolean>(true);
 
+  const { currentUser } = useSelector((state: RootState) => state.user);
   const { loading, error: errorMessage } = useSelector((state: RootState) => state.action);
   const dispatch = useDispatch();
 
@@ -93,7 +97,10 @@ export default function Feed() {
         ) : null}
       </div>
       <div className='space-y-4'>
-        {posts && posts.map((post) => <Post key={post.id} postInfo={post} />)}
+        {posts &&
+          posts.map((post) => (
+            <Post key={post.id} postInfo={post} user={currentUser ? currentUser : undefined} />
+          ))}
       </div>
       <div className='flex items-center justify-between mb-6'>
         {showMore && (
