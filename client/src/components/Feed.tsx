@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RootState } from '../redux/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { actionStart, actionSuccess, actionFailed } from '../redux/actionSlice';
@@ -6,33 +6,16 @@ import { actionStart, actionSuccess, actionFailed } from '../redux/actionSlice';
 import Post from './Post';
 import { Alert, Spinner } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
+import { PostInfo } from '@type/global';
 
-interface PostInfo {
-  id: string;
-  title: string;
-  poster: string;
-  createdAt: string;
-  description: string;
-  author: {
-    id: string;
-    username: string;
-    photoUrl: string;
-  };
-  postTags: {
-    tagId: string;
-    tag: {
-      name: string;
-    };
-  }[];
-  bookmarks: {
-    id: string;
-  };
+interface FeedProps {
+  onBookmarkChange: (postInfo: PostInfo, isBookmarked: boolean) => void;
 }
 
-export default function Feed() {
-  const [posts, setPosts] = useState<PostInfo[]>();
-
+const Feed: React.FC<FeedProps> = ({ onBookmarkChange }) => {
   const [showMore, setShowMore] = useState<boolean>(true);
+
+  const [posts, setPosts] = useState<PostInfo[]>();
 
   const { currentUser } = useSelector((state: RootState) => state.user);
   const { loading, error: errorMessage } = useSelector((state: RootState) => state.action);
@@ -99,7 +82,12 @@ export default function Feed() {
       <div className='space-y-4'>
         {posts &&
           posts.map((post) => (
-            <Post key={post.id} postInfo={post} user={currentUser ? currentUser : undefined} />
+            <Post
+              key={post.id}
+              postInfo={post}
+              user={currentUser ? currentUser : undefined}
+              onBookmarkChange={onBookmarkChange}
+            />
           ))}
       </div>
       <div className='flex items-center justify-between mb-6'>
@@ -111,4 +99,6 @@ export default function Feed() {
       </div>
     </main>
   );
-}
+};
+
+export default Feed;

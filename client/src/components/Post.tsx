@@ -2,41 +2,19 @@ import React, { FormEvent, useState } from 'react';
 import { CiBookmarkCheck, CiBookmarkPlus } from 'react-icons/ci';
 import { actionFailed, actionStart, actionSuccess } from '../redux/actionSlice';
 import { useDispatch } from 'react-redux';
+import { PostInfo, UserInfo } from '@type/global';
 
 interface PostProp {
   postInfo: PostInfo;
-  user?: {
-    id: string;
-    username: string;
-  };
+  user?: UserInfo;
+  onBookmarkChange?: (postInfo: PostInfo, isBookmarked: boolean) => void;
 }
 
-interface PostInfo {
-  id: string;
-  title: string;
-  poster: string;
-  createdAt: string;
-  description: string;
-  author: {
-    id: string;
-    username: string;
-    photoUrl: string;
-  };
-  postTags: {
-    tagId: string;
-    tag: {
-      name: string;
-    };
-  }[];
-  bookmarks?: {
-    id: string;
-  };
-}
-
-const Post: React.FC<PostProp> = ({ postInfo, user }) => {
+const Post: React.FC<PostProp> = ({ postInfo, user, onBookmarkChange }) => {
   const dispatch = useDispatch();
-
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(postInfo.bookmarks?.id ? true : false);
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(
+    postInfo.bookmarks?.id ? true : false
+  );
 
   async function handleBookmark(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -57,7 +35,13 @@ const Post: React.FC<PostProp> = ({ postInfo, user }) => {
       if (!res.ok) {
         return dispatch(actionFailed(data.message));
       }
-      setIsBookmarked(isBookmarked == true ? false : true)
+      const newBookmarkState = !isBookmarked;
+      setIsBookmarked(newBookmarkState);
+
+      if (onBookmarkChange) {
+        onBookmarkChange(postInfo, newBookmarkState);
+      }
+
       dispatch(actionSuccess(data.message));
     } catch (error) {
       dispatch(actionFailed((error as Error).message));
@@ -89,7 +73,6 @@ const Post: React.FC<PostProp> = ({ postInfo, user }) => {
               })}
             </span>
           </p>
-
           <p className='text-sm'>Founder, teacher & developer</p>
         </div>
       </a>
@@ -117,7 +100,7 @@ const Post: React.FC<PostProp> = ({ postInfo, user }) => {
       <div>
         <div className='flex w-full items-center justify-between space-x-4'>
           <div className='flex items-center space-x-2'>
-            {postInfo.postTags.map((tag) => (
+            {postInfo.postTags!.map((tag) => (
               <div
                 key={`/search/tag?=${tag.tagId}`}
                 className='rounded-2xl bg-gray-200/50 px-5 py-3'
@@ -128,17 +111,17 @@ const Post: React.FC<PostProp> = ({ postInfo, user }) => {
           </div>
           <form onSubmit={handleBookmark}>
             <button type='submit' disabled={user ? false : true}>
-            {user ? (
-              <>
-                {isBookmarked ? (
-                  <CiBookmarkCheck className='cursor-pointer text-3xl text-blue-500' />
-                ) : (
-                  <CiBookmarkPlus className='cursor-pointer text-3xl' />
-                )}
-              </>
-            ) : (
-              <CiBookmarkPlus className='cursor-not-allowed text-3xl'/>
-            )}
+              {user ? (
+                <>
+                  {isBookmarked ? (
+                    <CiBookmarkCheck className='cursor-pointer text-3xl text-blue-500' />
+                  ) : (
+                    <CiBookmarkPlus className='cursor-pointer text-3xl' />
+                  )}
+                </>
+              ) : (
+                <CiBookmarkPlus className='cursor-not-allowed text-3xl' />
+              )}
             </button>
           </form>
         </div>
