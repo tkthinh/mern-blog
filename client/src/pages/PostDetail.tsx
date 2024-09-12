@@ -13,43 +13,13 @@ import { FcLike } from 'react-icons/fc';
 import { BsChat } from 'react-icons/bs';
 import { HiEnvelope } from 'react-icons/hi2';
 
+import { PostInfo, CommentData } from '@type/global';
 import Comment from '../components/Comment';
-
-interface PostData {
-  id: string;
-  title: string;
-  content: string;
-  poster: string;
-  createdAt: string;
-  author: {
-    id: string;
-    username: string;
-    photoUrl: string;
-  };
-  postTags: {
-    tagId: string;
-    tag: {
-      name: string;
-    };
-  }[];
-}
-
-interface CommentData {
-  id: string;
-  userId: string;
-  postId: string;
-  text: string;
-  createdAt: string;
-  user: {
-    photoUrl: string;
-    username: string;
-  };
-}
 
 export default function PostDetail() {
   const { id } = useParams();
 
-  const [postData, setPostData] = useState<PostData>();
+  const [postData, setPostData] = useState<PostInfo>();
 
   const [commentData, setCommentData] = useState<CommentData[]>([]);
   const [reloadComments, setReloadComments] = useState(false);
@@ -185,13 +155,13 @@ export default function PostDetail() {
               </div>
             </div>
             <div className='flex gap-x-3'>
-              {postData.postTags.map((tag) => (
+              {postData.postTags!.map((tag) => (
                 <a className='underline' key={tag.tagId} href={`/t/${tag.tagId}`}>
                   #{tag.tag.name}
                 </a>
               ))}
             </div>
-            {parse(postData.content)}
+            {parse(postData.content!)}
           </div>
           <div className='fixed bottom-10 w-full flex flex-row justify-center'>
             <div className='flex items-center justify-between border border-gray-400 gap-x-4 bg-neutral-200 dark:bg-white shadow-sm rounded-full px-6 py-4'>

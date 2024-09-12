@@ -8,33 +8,10 @@ import Post from '../components/Post';
 import { Alert, Spinner } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
 
+import { PostInfo, UserInfo } from '@type/global';
+
 interface UserPost {
   results: PostInfo[];
-}
-
-interface PostInfo {
-  id: string;
-  title: string;
-  poster: string;
-  description: string;
-  createdAt: string;
-  author: {
-    id: string;
-    username: string;
-    photoUrl: string;
-  };
-  postTags: {
-    tagId: string;
-    tag: {
-      name: string;
-    };
-  }[];
-}
-
-interface UserInfo {
-  username: string;
-  photoUrl: string;
-  createdAt: string;
 }
 
 export default function User() {
@@ -107,7 +84,7 @@ export default function User() {
                   </div>
                   <div>
                     <span>Member since </span>
-                    {new Date(userInfo.createdAt).toLocaleString('en-US', {
+                    {new Date(userInfo.createdAt!).toLocaleString('en-US', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
