@@ -13,12 +13,13 @@ export default function Sidebar({ bookmarkedPosts }: SidebarProps) {
         </h3>
         <div className='flex flex-col space-y-4'>
           <div className='flex flex-row items-center space-x-5'>
-            <div className='h-10 w-10 flex-none rounded-full bg-gray-300'></div>
+            <div className='h-10 w-10 flex-none'>
+              <img src="https://flowbite.com/docs/images/people/profile-picture-2.jpg/" className='w-full rounded-full' />
+            </div>
             <div>
-              <div className='text-sm font-bold text-gray-900 dark:text-gray-100'>Anh Liêm</div>
+              <div className='text-sm font-bold text-gray-900 dark:text-gray-100'>John Doe</div>
               <div className='text-xs line-clamp-2 lg:line-clamp-3'>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum officiis obcaecati
-                minima?
+                Senior DevOps Engineer
               </div>
             </div>
             <div>
@@ -33,7 +34,7 @@ export default function Sidebar({ bookmarkedPosts }: SidebarProps) {
         {bookmarkedPosts?.length > 0 ? (
           bookmarkedPosts.map((post) => (
             <div key={post.id} className='flex flex-col space-y-8 mb-4'>
-              <a href={`/post/${post.id}`} className='group flex items-center space-x-6'>
+              <a href={`/post/${post.id}`} className='group flex items-start space-x-6'>
                 <div className='aspect-square h-full w-2/5 rounded-xl'>
                   <img src={post.poster} alt={post.title} />
                 </div>
@@ -42,9 +43,6 @@ export default function Sidebar({ bookmarkedPosts }: SidebarProps) {
                     {post.title}
                   </div>
                   <div className='line-clamp-2'>{post.description}</div>
-                  <div className='flex w-full items-center space-x-4'>
-                    <div>{new Date(post.createdAt).toLocaleDateString()}</div>
-                  </div>
                 </div>
               </a>
             </div>
