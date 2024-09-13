@@ -14,10 +14,18 @@ interface UserPost {
   results: PostInfo[];
 }
 
+interface UserInfoExtended extends UserInfo {
+  postCount: number;
+  followingCount: number;
+  followerCount: number;
+}
+
 export default function User() {
   const { id } = useParams();
 
-  const [userInfo, setUserInfo] = useState<UserInfo>();
+  const { currentUser } = useSelector((state: RootState) => state.user);
+
+  const [userInfo, setUserInfo] = useState<UserInfoExtended>();
   const [userPosts, setUserPosts] = useState<UserPost>();
 
   const { loading, error: errorMessage } = useSelector((state: RootState) => state.action);
@@ -77,10 +85,10 @@ export default function User() {
                   <div className='text-2xl font-semibold '>{userInfo.username}</div>
                   <div className='italic'>@dummyusername</div>
 
-                  <div>100 Posts</div>
+                  <div>{userInfo.postCount} Posts</div>
                   <div className='flex items-center space-x-4'>
-                    <span>200</span> Followers
-                    <span>150</span> Followings
+                    <span>{`${userInfo.followerCount} Followers`}</span>
+                    <span>{`${userInfo.followingCount} Followings`}</span>
                   </div>
                   <div>
                     <span>Member since </span>
@@ -91,9 +99,11 @@ export default function User() {
                     })}
                   </div>
                   <div className='flex w-full items-center space-x-4 mt-2'>
-                    <button onClick={() => {}} className='primary-btn'>
-                      Unfollow
-                    </button>
+                    {currentUser?.id === id ? (
+                      <button onClick={() => {}} className='primary-btn'>
+                        Follow
+                      </button>
+                    ) : null}
 
                     <button
                       onClick={() => {
