@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ErrorWithCode } from '../lib/custom-error';
 
 import { db } from '../db/db';
-import { like, bookmark, comment, user } from '../db/schema';
+import { like, bookmark, comment, user, follow } from '../db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 export async function fetchLike(req: Request, res: Response, next: NextFunction) {
@@ -130,7 +130,7 @@ export async function fetchBookmark(req: Request, res: Response, next: NextFunct
         user: {
           columns: {
             username: true,
-            photoUrl: true
+            photoUrl: true,
           },
         },
       },
@@ -172,4 +172,26 @@ export async function toggleBookmark(req: Request, res: Response, next: NextFunc
 }
 
 export async function getFollower() {}
-export async function toggleUserFollow() {}
+export async function toggleUserFollow(req: Request, res: Response, next: NextFunction) {
+  const { followerID, followingID } = req.body;
+
+  try {
+    const existingFollow = await db.query.follow.findFirst({
+      columns: {
+        followerId: true,
+        followingId: true,
+      },
+      where: and(eq(follow.followerId, followerID)),
+    });
+
+    if (existingFollow) {
+      await db.delete(follow).where(eq(bookmark.id, existingFollow.followerId));
+      return res.status(200).json({ message: 'Follow removed' });
+    } else {
+      const newFollow = await db.insert(follow).values({ followerId: followerID, followingId: followingID }).returning();
+      return res.status(200).json(newFollow);
+    }
+  } catch (error) {
+    return next(new ErrorWithCode(500, 'Error following'));
+  }
+}

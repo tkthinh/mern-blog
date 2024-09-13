@@ -4,26 +4,32 @@ import { AuthenticatedRequest } from '../lib/authenticated-request';
 import { ErrorWithCode } from '../lib/custom-error';
 
 import { db } from '../db/db';
-import { user } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { user, post, follow } from '../db/schema';
+import { eq, sql } from 'drizzle-orm';
 
 export async function getUserInfo(req: Request, res: Response, next: NextFunction) {
-  const userId = req.params.id
+  const userId = req.params.id;
   try {
-    const result = await db.query.user.findFirst({
-      columns: {
-        username: true,
-        photoUrl: true,
-        createdAt: true,
-      },
-      where: eq(user.id, userId),
-    });
+    const result = await db
+      .select({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        photoUrl: user.photoUrl,
+        createdAt: user.createdAt,
+        postCount: sql<number>`(SELECT COUNT(*) FROM ${post} WHERE ${post.authorId} = ${userId})`.as('post_count'),
+        followingCount: sql<number>`(SELECT COUNT(*) FROM ${follow} WHERE ${follow.followerId} = ${user.id})`.as('following_count'),
+        followerCount: sql<number>`(SELECT COUNT(*) FROM ${follow} WHERE ${follow.followingId} = ${user.id})`.as('follower_count'),
+      })
+      .from(user)
+      .where(eq(user.id, userId))
+      .limit(1);
 
-    if (!result) {
+    if (result.length === 0) {
       return next(new ErrorWithCode(404, 'User not found'));
     }
 
-    res.status(200).json(result);
+    res.status(200).json(result[0]);
   } catch (error) {
     return next(new ErrorWithCode(500, 'Error getting user info'));
   }
